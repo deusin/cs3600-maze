@@ -77,3 +77,42 @@ void Maze::Draw()
 		for (int j = 0; j < HEIGHT; j++)
 			cells[i][j].Draw(i, j);
 }
+
+bool Maze::IsSafe(double x, double y, double r)
+{
+	// TEST QUESTION
+
+	// What cell am I in?
+	int i = (int)x;
+	int j = (int)y;
+
+	// Where am I in the cell?
+	double xOffset = x - i;
+	double yOffset = y - j;
+
+	// There's a wall there and I'm colliding
+	if (cells[i][j].right && xOffset + r > 1.0)
+		return false;
+	if (cells[i][j].left && xOffset - r < 0.0)
+		return false;
+	if (cells[i][j].top && yOffset + r > 1.0)
+		return false;
+	if (cells[i][j].bottom && yOffset - r < 0.0)
+		return false;
+
+	// We know that there is always an edge on every corner based on the way we drew the maze
+	if (xOffset + r > 1.0 && yOffset + r > 1.0)
+		return false;
+	if (xOffset + r > 1.0 && yOffset - r < 0.0)
+		return false;
+	if (xOffset - r < 0.0 && yOffset + r > 1.0)
+		return false;
+	if (xOffset - r < 0.0 && yOffset - r < 0.0)
+		return false;
+
+
+	// No collisions
+	return true;
+
+
+}

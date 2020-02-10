@@ -18,6 +18,7 @@ public:
 	void RemoveWalls();
 	void RemoveWallsR(int i, int j);
 	void Draw();
+	bool IsSafe(double x, double y, double r);
 
 private:
 	Cell cells[WIDTH][HEIGHT];

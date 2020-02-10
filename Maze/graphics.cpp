@@ -22,6 +22,10 @@
 double screen_x = 700;
 double screen_y = 500;
 
+bool gLeftButtonDown = false;
+bool gRightButtonDown = false;
+bool gMiddleButtonDown = false;
+
 Maze gMaze;
 
 // 
@@ -97,9 +101,52 @@ void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
+
+	// Update Rat:
+	if (gLeftButtonDown == true)
+	{
+		//gRat.SpinLeft();
+		degrees += 0.05;
+	}
+	if (gMiddleButtonDown == true)
+	{
+
+		//gRat.ScurryForward();
+		double radians = degrees * 3.141 / 180;
+		double dx = std::cos(radians);
+		double dy = std::sin(radians);
+		double SPEED = 0.001;
+		if (pMaze->IsSafe(x + dx * SPEED, y + dy * speed, ratSize))
+		{
+			x += dx * SPEED;
+			y += dy * SPEED;
+		}
+		else if
+		{
+			// Try just moving in the x direction - sliding along the wall
+		}
+		else if
+		{
+			// Try just moving in the y direction - sliding along the wall
+		}
+	}
+
 	glColor3ub(100,100,255);
 	gMaze.Draw();
 
+	glPushMatrix();
+	// Draw rat
+	double x = 2.5;
+	double y = 0.5;
+	double degrees = 90;
+	glTranslated(x, y, 0);
+	glRotated(degrees, 0, 0, 1);
+	glScaled(0.5, 0.5, 1);
+	DrawTriangle(0.5, 0, -0.3, 0.2, -0.3, -0.2);
+
+	glPopMatrix();
+
+	
 	glutSwapBuffers();
 }
 
@@ -148,18 +195,33 @@ void reshape(int w, int h)
 // system whenever any mouse button goes up or down.
 void mouse(int mouse_button, int state, int x, int y)
 {
+
+
 	if (mouse_button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) 
 	{
+		gLeftButtonDown = true;
 	}
 	if (mouse_button == GLUT_LEFT_BUTTON && state == GLUT_UP) 
 	{
+		gLeftButtonDown = false;
 	}
 	if (mouse_button == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN) 
 	{
+		gMiddleButtonDown = true;
 	}
 	if (mouse_button == GLUT_MIDDLE_BUTTON && state == GLUT_UP) 
 	{
+		gMiddleButtonDown = false;
 	}
+	if (mouse_button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+	{
+		gRightButtonDown = true;
+	}
+	if (mouse_button == GLUT_RIGHT_BUTTON && state == GLUT_UP)
+	{
+		gRightButtonDown = false;
+	}
+
 	glutPostRedisplay();
 }
 
