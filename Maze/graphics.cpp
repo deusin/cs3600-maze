@@ -28,6 +28,13 @@ bool gMiddleButtonDown = false;
 
 Maze gMaze;
 
+
+viewtype current_view = top_view;
+
+double x = 2.5;
+double y = .5;
+double degrees = 90;
+
 // 
 // Functions that draw basic primitives
 //
@@ -99,33 +106,38 @@ void DrawText(double x, double y, const char *string)
 // system whenever it decides things need to be redrawn.
 void display(void)
 {
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	if (current_view == perspective_view)
+	{
+		glEnable(GL_DEPTH_TEST);
+		glLoadIdentity();
+		gluLookAt(3.5, -3, 7, 3, 3, 0, 0, 0, 1);
+	}
 
 	// Update Rat:
 	if (gLeftButtonDown == true)
 	{
 		//gRat.SpinLeft();
-		degrees += 0.05;
+		degrees += .05;
 	}
 	if (gMiddleButtonDown == true)
 	{
-
 		//gRat.ScurryForward();
-		double radians = degrees * 3.141 / 180;
+		double radians = degrees * 3.1415926 / 180.;
 		double dx = std::cos(radians);
 		double dy = std::sin(radians);
-		double SPEED = 0.001;
-		if (pMaze->IsSafe(x + dx * SPEED, y + dy * speed, ratSize))
+		double SPEED = .001;
+		if (true) //(pMaze->IsSafe(x + dx * SPEED, y + dy * SPEED, ratSize))
 		{
 			x += dx * SPEED;
 			y += dy * SPEED;
 		}
-		else if
+		else if (true)
 		{
 			// Try just moving in the x direction - sliding along the wall
 		}
-		else if
+		else if (true)
 		{
 			// Try just moving in the y direction - sliding along the wall
 		}
@@ -134,20 +146,20 @@ void display(void)
 	glColor3ub(100,100,255);
 	gMaze.Draw();
 
-	glPushMatrix();
-	// Draw rat
-	double x = 2.5;
-	double y = 0.5;
-	double degrees = 90;
-	glTranslated(x, y, 0);
-	glRotated(degrees, 0, 0, 1);
-	glScaled(0.5, 0.5, 1);
-	DrawTriangle(0.5, 0, -0.3, 0.2, -0.3, -0.2);
+	// Draw Rat:
+	//gRat.Draw();
+	if (current_view != rat_view)
+	{
+		glPushMatrix();
+		glTranslated(x, y, 0);
+		glRotated(degrees, 0, 0, 1);
+		glScaled(0.5, 0.5, 1.0);
+		DrawTriangle(0.5, 0, -0.3, 0.2, -0.3, -0.2);
+		glPopMatrix();
+	}
 
-	glPopMatrix();
-
-	
 	glutSwapBuffers();
+	glutPostRedisplay();
 }
 
 
@@ -170,32 +182,55 @@ void keyboard(unsigned char c, int x, int y)
 	glutPostRedisplay();
 }
 
+void SetTopView(int w, int h)
+{
+	// go into 2D mode
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	double world_margin_x = 0.5;
+	double world_margin_y = 0.5;
+	gluOrtho2D(-world_margin_x, WIDTH + world_margin_x,
+		-world_margin_y, HEIGHT + world_margin_y);
+	glMatrixMode(GL_MODELVIEW);
+}
+void SetPerspectiveView(int w, int h)
+{
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	double aspectRatio = (GLdouble)w / (GLdouble)h;
+	gluPerspective(
+		/* field of view in degree */ 38.0,
+		/* aspect ratio */ aspectRatio,
+		/* Z near */ .1, /* Z far */ 30.0);
+	glMatrixMode(GL_MODELVIEW);
+}
 
 // This callback function gets called by the Glut
 // system whenever the window is resized by the user.
 void reshape(int w, int h)
 {
-	// Reset our global variables to the new width and height.
 	screen_x = w;
 	screen_y = h;
-
-	// Set the pixel resolution of the final picture (Screen coordinates).
 	glViewport(0, 0, w, h);
 
-	// Set the projection mode to 2D orthographic, and set the world coordinates:
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	const double MARGIN = 0.5;
-	gluOrtho2D(-MARGIN, WIDTH+MARGIN, -MARGIN, HEIGHT+MARGIN);
-	glMatrixMode(GL_MODELVIEW);
-
+	if (current_view == top_view)
+	{
+		SetTopView(w, h);
+	}
+	else if (current_view == perspective_view)
+	{
+		SetPerspectiveView(w, h);
+	}
+	else // current_view == rat_view
+	{
+		SetPerspectiveView(w, h);
+	}
 }
 
 // This callback function gets called by the Glut
 // system whenever any mouse button goes up or down.
 void mouse(int mouse_button, int state, int x, int y)
 {
-
 
 	if (mouse_button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) 
 	{
@@ -228,6 +263,7 @@ void mouse(int mouse_button, int state, int x, int y)
 // Your initialization code goes here.
 void InitializeMyStuff()
 {
+	gMaze.RemoveWalls();
 }
 
 
@@ -235,7 +271,7 @@ int main(int argc, char **argv)
 {
 	glutInit(&argc, argv);
 
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(screen_x, screen_y);
 	glutInitWindowPosition(50, 50);
 

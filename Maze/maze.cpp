@@ -1,4 +1,5 @@
 #include <vector>
+#include <cstdlib>
 #include "glut.h"
 #include "graphics.h"
 #include "maze.h"
@@ -10,15 +11,35 @@ Cell::Cell()
 }
 void Cell::Draw(int x, int y)
 {
+	// draw walls as GL_LINES
 	glColor3d(0, 0, 0);
 	if (left)
 		DrawLine(x, y, x, y + 1);
+	//{
+	//	glBegin(GL_QUADS);
+	//	glVertex3i(x, y, 0);
+	//	glVertex3i(x, y + 1, 0);
+	//	glVertex3i(x, y + 1, 1);
+	//	glVertex3i(x, y, 1);
+	//	glEnd();
+	//}
 	if (top)
 		DrawLine(x, y + 1, x + 1, y + 1);
 	if (right)
 		DrawLine(x + 1, y + 1, x + 1, y);
 	if (bottom)
 		DrawLine(x + 1, y, x, y);
+
+	if (current_view == top_view)
+	{
+	}
+	else
+	{
+		// draw walls as GL_QUADS
+		// figure out a way to draw each wall in a different color. (you don't have to save the color of the wall)
+		// figure out a way to prevent two co-planar wall from 'bleeding' on top of each other when drawing.
+	}
+
 }
 
 
@@ -49,6 +70,18 @@ void Maze::RemoveWallsR(int i, int j)
 		{
 			moves.push_back(LEFT);
 		}
+		if (i + 1 < WIDTH && !cells[i + 1][j].visited)
+		{
+			moves.push_back(RIGHT);
+		}
+		if (j - 1 >= 0 && !cells[i][j - 1].visited)
+		{
+			moves.push_back(DOWN);
+		}
+		if (j + 1 < HEIGHT && !cells[i][j + 1].visited)
+		{
+			moves.push_back(UP);
+		}
 
 		// check other 3 directions
 
@@ -66,11 +99,30 @@ void Maze::RemoveWallsR(int i, int j)
 			cells[i - 1][j].right = false;
 			RemoveWallsR(i - 1, j);
 		}
+		if (moves[r] == RIGHT)
+		{
+			cells[i][j].right = false;
+			cells[i + 1][j].left = false;
+			RemoveWallsR(i + 1, j);
+		}
+		if (moves[r] == UP)
+		{
+			cells[i][j].top = false;
+			cells[i][j + 1].bottom = false;
+			RemoveWallsR(i, j + 1);
+		}
+		if (moves[r] == DOWN)
+		{
+			cells[i][j].bottom = false;
+			cells[i][j - 1].top = false;
+			RemoveWallsR(i, j - 1);
+		}
 		// Likewise for other 3 directions
 
 	}
 
 }
+
 void Maze::Draw()
 {
 	for (int i = 0; i < WIDTH; i++)
