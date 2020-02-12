@@ -32,9 +32,9 @@ Rat gRat(2.5, 0.5, 90);
 
 viewtype current_view = top_view;
 
-double x = 2.5;
-double y = .5;
-double degrees = 90;
+//double x = 2.5;
+//double y = .5;
+//double degrees = 90;
 
 // 
 // Functions that draw basic primitives
@@ -132,18 +132,20 @@ void display(void)
 		double dx = std::cos(radians);
 		double dy = std::sin(radians);
 		double SPEED = .01;
-		if (true) //(pMaze->IsSafe(x + dx * SPEED, y + dy * SPEED, ratSize))
+		double newX = gRat.x + dx * SPEED;
+		double newY = gRat.y + dy * SPEED;
+		if (gMaze.IsSafe(newX, newY, gRat.radius))
 		{
-			gRat.x += dx * SPEED;
-			gRat.y += dy * SPEED;
+			gRat.x = newX;
+			gRat.y = newY;
 		}
-		else if (true)
+		else if (gMaze.IsSafe(newX, gRat.y, gRat.radius))
 		{
-			// Try just moving in the x direction - sliding along the wall
+			gRat.x = newX;
 		}
-		else if (true)
+		else if (gMaze.IsSafe(gRat.x, newY, gRat.radius))
 		{
-			// Try just moving in the y direction - sliding along the wall
+			gRat.y = newY;
 		}
 	}
 

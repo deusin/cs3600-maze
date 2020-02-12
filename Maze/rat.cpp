@@ -6,7 +6,7 @@
 
 Rat::Rat(double x, double y, double degrees) : x(x), y(y), degrees(degrees)
 {
-	radius = 0.5;
+	radius = 0.25;
 }
 
 void Rat::Draw()
