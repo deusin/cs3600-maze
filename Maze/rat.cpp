@@ -21,6 +21,34 @@ void Rat::Draw()
 	glVertex2d(-0.3, 0.2);
 	glVertex2d(-0.3, -0.2);
 	glEnd();
+	// Whiskers
+	glBegin(GL_LINES);
+	glVertex2d(0.2, 0);
+	glVertex2d(0.25, 0.3);
+	glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(0.25, 0);
+	glVertex2d(0.35, 0.3);
+	glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(0.2, 0);
+	glVertex2d(0.25, -0.3);
+	glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(0.25, 0);
+	glVertex2d(0.35, -0.3);
+	glEnd();
+	// Tail
+	glBegin(GL_LINES);
+	for (int i = 8; i < 16; i++)
+	{
+		double theta = (double)i / 32.0 * 2.0 * 3.1415926;
+		double x = -0.3 + radius * cos(theta);
+		double y = -0.25 + radius * sin(theta);
+		glVertex2d(x, y);
+	}
+	glEnd();
+
 	glPopMatrix();
 }
 
