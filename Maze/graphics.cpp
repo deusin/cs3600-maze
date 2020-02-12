@@ -16,6 +16,7 @@
 #include "glut.h"
 #include "graphics.h"
 #include "maze.h"
+#include "rat.h"
 
 
 // Global Variables (Only what you need!)
@@ -27,7 +28,7 @@ bool gRightButtonDown = false;
 bool gMiddleButtonDown = false;
 
 Maze gMaze;
-
+Rat gRat(2.5, 0.5, 90);
 
 viewtype current_view = top_view;
 
@@ -118,20 +119,23 @@ void display(void)
 	// Update Rat:
 	if (gLeftButtonDown == true)
 	{
-		//gRat.SpinLeft();
-		degrees += .05;
+		gRat.SpinLeft();
+	}
+	if (gRightButtonDown == true)
+	{
+		gRat.SpinRight();
 	}
 	if (gMiddleButtonDown == true)
 	{
 		//gRat.ScurryForward();
-		double radians = degrees * 3.1415926 / 180.;
+		double radians = gRat.degrees * 3.1415926 / 180.;
 		double dx = std::cos(radians);
 		double dy = std::sin(radians);
-		double SPEED = .001;
+		double SPEED = .01;
 		if (true) //(pMaze->IsSafe(x + dx * SPEED, y + dy * SPEED, ratSize))
 		{
-			x += dx * SPEED;
-			y += dy * SPEED;
+			gRat.x += dx * SPEED;
+			gRat.y += dy * SPEED;
 		}
 		else if (true)
 		{
@@ -147,15 +151,16 @@ void display(void)
 	gMaze.Draw();
 
 	// Draw Rat:
-	//gRat.Draw();
 	if (current_view != rat_view)
 	{
-		glPushMatrix();
-		glTranslated(x, y, 0);
-		glRotated(degrees, 0, 0, 1);
-		glScaled(0.5, 0.5, 1.0);
-		DrawTriangle(0.5, 0, -0.3, 0.2, -0.3, -0.2);
-		glPopMatrix();
+		gRat.Draw();
+
+		//glPushMatrix();
+		//glTranslated(x, y, 0);
+		//glRotated(degrees, 0, 0, 1);
+		//glScaled(0.5, 0.5, 1.0);
+		//DrawTriangle(0.5, 0, -0.3, 0.2, -0.3, -0.2);
+		//glPopMatrix();
 	}
 
 	glutSwapBuffers();
