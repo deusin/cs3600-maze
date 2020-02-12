@@ -17,7 +17,7 @@
 #include "graphics.h"
 #include "maze.h"
 #include "rat.h"
-
+#include <ctime>
 
 // Global Variables (Only what you need!)
 double screen_x = 700;
@@ -28,7 +28,7 @@ bool gRightButtonDown = false;
 bool gMiddleButtonDown = false;
 
 Maze gMaze;
-Rat gRat(2.5, 0.5, 90);
+Rat gRat(0.5, 0.5, 90);
 
 viewtype current_view = top_view;
 
@@ -277,6 +277,9 @@ void InitializeMyStuff()
 int main(int argc, char **argv)
 {
 	glutInit(&argc, argv);
+
+	srand(unsigned(time(0)));
+
 
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(screen_x, screen_y);

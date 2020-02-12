@@ -52,7 +52,8 @@ void Maze::RemoveWalls()
 {
 	RemoveWallsR(0, 0);
 
-	// Remove top and bottom wall
+	cells[0][0].bottom = false;
+	cells[WIDTH - 1][HEIGHT - 1].top = false;
 }
 
 void Maze::RemoveWallsR(int i, int j)
