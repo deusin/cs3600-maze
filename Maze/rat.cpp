@@ -17,6 +17,7 @@ void Rat::Draw()
 	{
 		return; // Don't draw ourselves in rat view
 	}
+	glColor3d(0, 0, 0);
 
 	glPushMatrix();
 	glTranslated(x, y, 0);

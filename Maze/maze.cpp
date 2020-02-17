@@ -11,6 +11,13 @@ Cell::Cell()
 }
 void Cell::DrawWall(int x1, int y1, int x2, int y2)
 {
+    double green = (double)(y1) / 1.5 / (double)(HEIGHT);
+    double blue = (double)(x1) / 1.5 / (double)(WIDTH);
+
+    glColor3d(0.4, green, blue);
+
+
+
     glBegin(GL_QUADS);
     glVertex3i(x1, y1, 0);
     glVertex3i(x2, y2, 0);
@@ -21,8 +28,6 @@ void Cell::DrawWall(int x1, int y1, int x2, int y2)
 void Cell::Draw(int x, int y)
 {
     // draw walls as GL_LINES
-    glColor3d(0, 0, 0);
-
     if (current_view == top_view)
     {
         if (left)
@@ -39,25 +44,10 @@ void Cell::Draw(int x, int y)
         if (left)
         {
             DrawWall(x, y, x, y + 1);
-
-            //glBegin(GL_QUADS);
-            //glVertex3i(x, y, 0);
-            //glVertex3i(x, y + 1, 0);
-            //glVertex3i(x, y + 1, 1);
-            //glVertex3i(x, y, 1);
-            //glEnd();
         }
         if (top)
         {
             DrawWall(x, y + 1, x + 1, y + 1);
-
-            //glBegin(GL_QUADS);
-            //glVertex3i(x, y + 1, 0);
-            //glVertex3i(x + 1, y + 1, 0);
-            //glVertex3i(x + 1, y + 1, 1);
-            //glVertex3i(x, y + 1, 1);
-            //glEnd();
-
         }
         if (right)
         {
@@ -75,11 +65,6 @@ void Cell::Draw(int x, int y)
                 DrawWall(x + 1, y, x, y);
             }
         }
-
-
-        // draw walls as GL_QUADS
-        // figure out a way to draw each wall in a different color. (you don't have to save the color of the wall)
-        // figure out a way to prevent two co-planar wall from 'bleeding' on top of each other when drawing.
     }
 
 }
