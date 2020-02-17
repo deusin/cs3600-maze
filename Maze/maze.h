@@ -9,6 +9,9 @@ struct Cell
 	void Draw(int x, int y);
 	bool left, top, right, bottom;
 	bool visited;
+private:
+	void DrawWall(int x1, int y1, int x2, int y2);
+
 };
 
 class Maze

@@ -115,6 +115,25 @@ void display(void)
 		glLoadIdentity();
 		gluLookAt(3.5, -3, 7, 3, 3, 0, 0, 0, 1);
 	}
+	else if (current_view == top_view)
+	{
+		glDisable(GL_DEPTH_TEST);
+		glLoadIdentity();
+	}
+	else // current_view == rat_view
+	{
+		glEnable(GL_DEPTH_TEST);
+		glLoadIdentity();
+		double z_level = .25;
+		double x = gRat.GetX();
+		double y = gRat.GetY();
+		double dx = gRat.GetDX();
+		double dy = gRat.GetDY();
+		double at_x = x + dx;
+		double at_y = y + dy;
+		double at_z = z_level;
+		gluLookAt(x, y, z_level, at_x, at_y, at_z, 0, 0, 1);
+	}
 
 	// Update Rat:
 	if (gLeftButtonDown == true)
@@ -127,25 +146,21 @@ void display(void)
 	}
 	if (gMiddleButtonDown == true)
 	{
-		//gRat.ScurryForward();
-		double radians = gRat.degrees * 3.1415926 / 180.;
-		double dx = std::cos(radians);
-		double dy = std::sin(radians);
-		double SPEED = .01;
-		double newX = gRat.x + dx * SPEED;
-		double newY = gRat.y + dy * SPEED;
-		if (gMaze.IsSafe(newX, newY, gRat.radius))
+
+		double newX = gRat.GetNextX();
+		double newY = gRat.GetNextY();
+		if (gMaze.IsSafe(newX, newY, gRat.GetRadius()))
 		{
-			gRat.x = newX;
-			gRat.y = newY;
+			gRat.SetX(newX);
+			gRat.SetY(newY);
 		}
-		else if (gMaze.IsSafe(newX, gRat.y, gRat.radius))
+		else if (gMaze.IsSafe(newX, gRat.GetY(), gRat.GetRadius()))
 		{
-			gRat.x = newX;
+			gRat.SetX(newX);
 		}
-		else if (gMaze.IsSafe(gRat.x, newY, gRat.radius))
+		else if (gMaze.IsSafe(gRat.GetX(), newY, gRat.GetRadius()))
 		{
-			gRat.y = newY;
+			gRat.SetY(newY);
 		}
 	}
 
@@ -156,13 +171,6 @@ void display(void)
 	if (current_view != rat_view)
 	{
 		gRat.Draw();
-
-		//glPushMatrix();
-		//glTranslated(x, y, 0);
-		//glRotated(degrees, 0, 0, 1);
-		//glScaled(0.5, 0.5, 1.0);
-		//DrawTriangle(0.5, 0, -0.3, 0.2, -0.3, -0.2);
-		//glPopMatrix();
 	}
 
 	glutSwapBuffers();
@@ -179,8 +187,16 @@ void keyboard(unsigned char c, int x, int y)
 		case 27: // escape character means to quit the program
 			exit(0);
 			break;
-		case 'b':
-			// do something when 'b' character is hit.
+		case 't':
+			current_view = top_view;
+			SetTopView(screen_x, screen_y);
+			break;
+		case 'p':
+			current_view = perspective_view;
+			SetPerspectiveView(screen_x, screen_y);
+			break;
+		case 'r':
+			current_view = rat_view;
 			break;
 		default:
 			return; // if we don't care, return without glutPostRedisplay()

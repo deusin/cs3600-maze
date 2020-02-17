@@ -7,10 +7,17 @@
 Rat::Rat(double x, double y, double degrees) : x(x), y(y), degrees(degrees)
 {
 	radius = 0.25;
+	speed = 0.04;
+	turnspeed = 1.5;
 }
 
 void Rat::Draw()
 {
+	if (current_view == rat_view)
+	{
+		return; // Don't draw ourselves in rat view
+	}
+
 	glPushMatrix();
 	glTranslated(x, y, 0);
 	glRotated(degrees, 0, 0, 1);
@@ -54,12 +61,12 @@ void Rat::Draw()
 
 void Rat::SpinLeft()
 {
-	degrees += 0.5;
+	degrees += turnspeed;
 }
 
 void Rat::SpinRight()
 {
-	degrees -= 0.5;
+	degrees -= turnspeed;
 }
 
 void Rat::ScurryForward()
