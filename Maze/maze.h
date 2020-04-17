@@ -1,7 +1,7 @@
 #pragma once
 
 const int WIDTH = 6;
-const int HEIGHT = 5;
+const int HEIGHT = 6;
 
 struct Cell
 {

@@ -18,6 +18,10 @@
 #include "maze.h"
 #include "rat.h"
 #include <ctime>
+#include <iostream>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 // Global Variables (Only what you need!)
 double screen_x = 700;
@@ -31,6 +35,11 @@ Maze gMaze;
 Rat gRat(0.5, 0.5, 90);
 
 viewtype current_view = top_view;
+
+// Textures
+const int num_textures = 3;
+unsigned int texName[num_textures];
+
 
 //double x = 2.5;
 //double y = .5;
@@ -287,6 +296,39 @@ void mouse(int mouse_button, int state, int x, int y)
 void InitializeMyStuff()
 {
 	gMaze.RemoveWalls();
+
+	const char max_file_size = 100;
+	char imageFiles[num_textures][max_file_size] = { "brick.jpg", "grass.jpg", "icon.jpg" };
+
+	glGenTextures(num_textures, texName);
+
+	for (int i = 0; i < num_textures; i++)
+	{
+		glBindTexture(GL_TEXTURE_2D, texName[i]);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		int width, height, nrChannels;
+		unsigned char* data = stbi_load(imageFiles[i], &width, &height, &nrChannels, 0);
+		if (data)
+		{
+			gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+			// NOTE: If the above command doesn't work, try it this way:
+				//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+				//glGenerateMipmap(GL_TEXTURE_2D);
+		}
+		else
+		{
+			std::cout << "Failed to load texture" << std::endl;
+		}
+		stbi_image_free(data);
+	}
+
 }
 
 

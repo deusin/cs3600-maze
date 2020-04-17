@@ -4,6 +4,8 @@
 #include "graphics.h"
 #include "maze.h"
 
+#include "stb_image.h"
+
 Cell::Cell()
 {
     left = top = right = bottom = true;
@@ -14,16 +16,24 @@ void Cell::DrawWall(int x1, int y1, int x2, int y2)
     double green = (double)(y1) / 1.5 / (double)(HEIGHT);
     double blue = (double)(x1) / 1.5 / (double)(WIDTH);
 
-    glColor3d(0.4, green, blue);
+    //glColor3d(0.4, green, blue);
 
+    glEnable(GL_TEXTURE_2D);
 
+    glBindTexture(GL_TEXTURE_2D, texName[0]); // brick
 
     glBegin(GL_QUADS);
-    glVertex3i(x1, y1, 0);
-    glVertex3i(x2, y2, 0);
-    glVertex3i(x2, y2, 1);
-    glVertex3i(x1, y1, 1);
+    //glTexCoord2f(0, 0);
+    //glTexCoord2f(0, 1);
+    //glTexCoord2f(1, 1);
+    //glTexCoord2f(1, 0);
+    glTexCoord2f(0, 1); glVertex3i(x1, y1, 0);
+    glTexCoord2f(1, 1); glVertex3i(x2, y2, 0);
+    glTexCoord2f(1, 0); glVertex3i(x2, y2, 1);
+    glTexCoord2f(0, 0); glVertex3i(x1, y1, 1);
     glEnd();
+
+
 }
 void Cell::Draw(int x, int y)
 {
@@ -153,9 +163,34 @@ void Maze::RemoveWallsR(int i, int j)
 
 void Maze::Draw()
 {
+    // Walls
     for (int i = 0; i < WIDTH; i++)
         for (int j = 0; j < HEIGHT; j++)
             cells[i][j].Draw(i, j);
+    // Floor
+    glEnable(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, texName[1]); // Grass
+    glBegin(GL_QUADS);
+    glTexCoord2f(0, 5); glVertex2d(0, WIDTH);
+    glTexCoord2f(5, 5); glVertex2d(HEIGHT, WIDTH);
+    glTexCoord2f(5, 0); glVertex2d(HEIGHT, 0);
+    glTexCoord2f(0, 0); glVertex2d(0, 0);
+    glEnd(); // GL_QUADS
+
+    // Victory marker
+
+    glBindTexture(GL_TEXTURE_2D, texName[2]); // Icon
+    glBegin(GL_QUADS);
+    glTexCoord2f(1, 0); glVertex2d(HEIGHT - 1, WIDTH + 1);
+    glTexCoord2f(0, 0); glVertex2d(HEIGHT, WIDTH + 1);
+    glTexCoord2f(0, 1); glVertex2d(HEIGHT, WIDTH);
+    glTexCoord2f(1, 1); glVertex2d(HEIGHT-1, WIDTH);
+    
+    
+    glEnd(); // GL_QUADS
+
+
 }
 
 bool Maze::IsSafe(double x, double y, double r)

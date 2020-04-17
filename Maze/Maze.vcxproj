@@ -142,6 +142,7 @@
     <ClInclude Include="graphics.h" />
     <ClInclude Include="maze.h" />
     <ClInclude Include="rat.h" />
+    <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="graphics.cpp" />
